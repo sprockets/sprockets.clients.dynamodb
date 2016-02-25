@@ -1,4 +1,5 @@
 API Documentation
 =================
 
-.. automodule:: sprockets.clients.dynamodb
+.. autoclass:: sprockets.clients.dynamodb.DynamoDB
+   :members:

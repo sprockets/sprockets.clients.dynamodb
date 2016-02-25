@@ -4,5 +4,6 @@
    :hidden:
 
    api
+   examples
    contributing
    history
