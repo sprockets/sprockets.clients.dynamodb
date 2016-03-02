@@ -35,7 +35,7 @@ setuptools.setup(
     install_requires=read_requirements('installation.txt'),
     license='BSD',
     namespace_packages=['sprockets', 'sprockets.clients'],
-    packages=setuptools.find_packages(),
+    packages=setuptools.find_packages(exclude=['examples']),
     classifiers=[
         'Development Status :: 1 - Planning',
         'Environment :: No Input/Output (Daemon)',
