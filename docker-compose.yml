@@ -1,0 +1,7 @@
+%YAML 1.2
+---
+dynamodb:
+  image: tray/dynamodb-local
+  command: -inMemory -port 7777
+  ports:
+   - 7777
