@@ -1,14 +1,33 @@
+sudo: reuired
+services:
+  - docker
 language: python
 python:
 - 2.7
 - 3.4
 - 3.5
 before_install:
-- pip install nose coverage codecov
+- docker pull tray/dynamodb-local
+- docker run -d -p 7777:7777 tray/dynamodb-local -inMemory -port 7777
+- mkdir /home/travis/.aws
+- printf "[default]\nregion=us-east-1\noutput=json\n" > /home/travis/.aws/config
+- printf "[default]\naws_access_key_id = FAKE0000000000000000\naws_secret_access_key = FAKE000000000000000000000000000000000000\n" > /home/travis/.aws/credentials
 - pip install -r requires/testing.txt
 install:
 - pip install -e .
+env:
+  DYNAMODB_ENDPOINT: http://localhost:7777
 script: nosetests --with-coverage
 after_success:
 - codecov
 sudo: false
+deploy:
+  distributions: sdist bdist_wheel
+  provider: pypi
+  user: sprockets
+  on:
+    python: 3.5
+    tags: true
+    all_branches: true
+  password:
+    secure: "pCvF0ROHU/p+mDgZT40yoRdNUmpov5B1jUh7mJ6bAUlsMNEaugX/cL+cUGNLgIhrcwBF93B7kdfuhGjO/2uF+k8aPhPocewwJ9qPTTyNMLGjpIclWp56KH9KLNISGmeTPguw06bpV0xOUw40AvSfTw4nmf4jaZsx1Ai2DUuoji7m1OvXwLL5+zXclngmxF7zVvPTnKmPDbJWUsF3n4DEJml8GBr7NW92yIo0Zu1LG3AiNrZWBebWa58Uv/DKOHQXYgyK0j3EixzTPkptoQgAByA6OVPPh6UOE2GUXuV83vDKeciyr/AExLQnlIaONa2FS4utOFdu2zoLsUJy+jeCJxVZ5D+jfYXSx1LyeQKjOZikUKNhI3O3XH7IYwd2YqhlRAE6SvFGQB1nYn6mXklSwdyOEaQ0ufUY4aCH9PRvswOUDJKIJw4xsiEUF46enrGWHVCnW3l0fPbhPx1GbB/PfzcJS3WSEgOKHbZ2u7PHrIkElxAOrI6Vabmrr0g5GD1T2DqBls600lQ/+HkRQ9cXVjegiUach3xj3IKL/gZJUuqiwl2xMPdIfi33GsZp5OItSt1fNmBZo4gz5zBEXYShpgeqx0hP0XEfQWnDLNoaHNhzaW9d1PYs7JHIsiLRw9HcJNdRzm4u08442m42WyEP5i3XnpmylFu6U+2a1mR4VEg="
