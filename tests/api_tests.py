@@ -129,6 +129,17 @@ class CreateTableTests(AsyncTestCase):
         with self.assertRaises(exceptions.ValidationException):
             yield self.client.create_table(definition)
 
+    @testing.gen_test
+    def test_double_create(self):
+        definition = self.generic_table_definition()
+        response = yield self.client.create_table(definition)
+        self.assertEqual(response['TableName'], definition['TableName'])
+        self.assertIn(response['TableStatus'],
+                      [dynamodb.TABLE_ACTIVE,
+                       dynamodb.TABLE_CREATING])
+        with self.assertRaises(exceptions.ResourceInUse):
+            response = yield self.client.create_table(definition)
+
 
 class DeleteTableTests(AsyncTestCase):
 
