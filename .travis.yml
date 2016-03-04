@@ -1,4 +1,4 @@
-sudo: reuired
+sudo: required
 services:
   - docker
 language: python

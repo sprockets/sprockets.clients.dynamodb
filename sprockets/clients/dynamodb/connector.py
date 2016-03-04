@@ -734,7 +734,7 @@ class DynamoDB(object):
                  :exc:`~sprockets.clients.dynamodb.exceptions.ThroughputExceeded`
                  :exc:`~sprockets.clients.dynamodb.exceptions.ValidationException`
 
-        .. _GetItem: http://docs.aws.amazon.com/amazondynamodb/
+        .. _UpdateItem: http://docs.aws.amazon.com/amazondynamodb/
            latest/APIReference/API_UpdateItem.html
 
         """
@@ -890,7 +890,7 @@ class DynamoDB(object):
                  :exc:`~sprockets.clients.dynamodb.exceptions.ThroughputExceeded`
                  :exc:`~sprockets.clients.dynamodb.exceptions.ValidationException`
 
-        .. _GetItem: http://docs.aws.amazon.com/amazondynamodb/
+        .. _DeleteItem: http://docs.aws.amazon.com/amazondynamodb/
            latest/APIReference/API_DeleteItem.html
 
         """
@@ -916,7 +916,7 @@ class DynamoDB(object):
                  :exc:`~sprockets.clients.dynamodb.exceptions.ThroughputExceeded`
                  :exc:`~sprockets.clients.dynamodb.exceptions.ValidationException`
 
-        .. _GetItem: http://docs.aws.amazon.com/amazondynamodb/
+        .. _BatchGetItem: http://docs.aws.amazon.com/amazondynamodb/
            latest/APIReference/API_BatchGetItem.html
 
         """
@@ -942,7 +942,7 @@ class DynamoDB(object):
                  :exc:`~sprockets.clients.dynamodb.exceptions.ThroughputExceeded`
                  :exc:`~sprockets.clients.dynamodb.exceptions.ValidationException`
 
-        .. _GetItem: http://docs.aws.amazon.com/amazondynamodb/
+        .. _BatchWriteItem: http://docs.aws.amazon.com/amazondynamodb/
            latest/APIReference/API_BatchWriteItem.html
 
         """

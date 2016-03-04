@@ -67,7 +67,7 @@ set -e
 
 mkdir -p build
 
-if test "$1" == 'shellinit'
+if test "$1" = 'shellinit'
 then
   # just build the environment file from docker containers
   build_env_file build/test-environment
