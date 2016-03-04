@@ -37,7 +37,7 @@ setuptools.setup(
     namespace_packages=['sprockets', 'sprockets.clients'],
     packages=setuptools.find_packages(exclude=['examples']),
     classifiers=[
-        'Development Status :: 1 - Planning',
+        'Development Status :: 3 - Alpha',
         'Environment :: No Input/Output (Daemon)',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: BSD License',
