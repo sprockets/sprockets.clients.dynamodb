@@ -6,4 +6,11 @@ except ImportError as error:
 
 version_info = (0, 0, 0)
 __version__ = '.'.join(str(v) for v in version_info)
-__all__ = ['DynamoDB', 'version_info', '__version__']
+
+# Response constants
+TABLE_ACTIVE = 'ACTIVE'
+TABLE_CREATING = 'CREATING'
+TABLE_DELETING = 'DELETING'
+TABLE_DISABLED = 'DISABLED'
+TABLE_UPDATING = 'UPDATING'
+
