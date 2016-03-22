@@ -12,6 +12,7 @@ class DynamoDBException(Exception):
     :ivar msg: The error message
 
     """
+
     def __init__(self, *args, **kwargs):
         super(DynamoDBException, self).__init__(*args, **kwargs)
 
@@ -167,7 +168,10 @@ class ServiceUnavailable(DynamoDBException):
 
 
 class ThrottlingException(DynamoDBException):
-    """The request was denied due to request throttling."""
+    """This exception might be returned if the following API operations are
+    requested too rapidly: CreateTable; UpdateTable; DeleteTable.
+
+    """
     pass
 
 
@@ -178,17 +182,28 @@ class TimeoutException(DynamoDBException):
 
 class ValidationException(DynamoDBException):
     """The input fails to satisfy the constraints specified by an AWS service.
+    This error can occur for several reasons, such as a required parameter
+    that is missing, a value that is out range, or mismatched data types. The
+    error message contains details about the specific part of the request that
+    caused the error.
 
     """
     pass
 
 
 MAP = {
+    'com.amazonaws.dynamodb.v20120810#ConditionalCheckFailedException':
+    ConditionalCheckFailedException,
+    'com.amazonaws.dynamodb.v20120810#ItemCollectionSizeLimitExceededException':
+    ItemCollectionSizeLimitExceeded,
     'com.amazonaws.dynamodb.v20120810#InternalFailure': InternalFailure,
-    'com.amazonaws.dynamodb.v20120810#ProvisionedThroughputExceeded':
-        ThroughputExceeded,
+    'com.amazonaws.dynamodb.v20120810#LimitExceededException': LimitExceeded,
+    'com.amazonaws.dynamodb.v20120810#ProvisionedThroughputExceededException':
+    ThroughputExceeded,
     'com.amazonaws.dynamodb.v20120810#ResourceInUseException': ResourceInUse,
     'com.amazonaws.dynamodb.v20120810#ResourceNotFoundException':
-        ResourceNotFound,
+    ResourceNotFound,
+    'com.amazonaws.dynamodb.v20120810#ThrottlingException':
+    ThrottlingException,
     'com.amazon.coral.validate#ValidationException': ValidationException
 }
