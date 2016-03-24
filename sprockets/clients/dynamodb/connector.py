@@ -104,8 +104,9 @@ class DynamoDB(object):
                 if http_err.code == 599:
                     future.set_exception(exceptions.TimeoutException())
                 else:
+
                     future.set_exception(
-                        exceptions.RequestException(http_err.message))
+                        exceptions.RequestException(http_err.response.body))
             except Exception as exception:
                 future.set_exception(exception)
             else:
@@ -126,7 +127,8 @@ class DynamoDB(object):
             if err.code == 599:
                 future.set_exception(exceptions.TimeoutException())
             else:
-                future.set_exception(exceptions.RequestException(err.message))
+                future.set_exception(
+                    exceptions.RequestException(err.response.body))
         else:
             ioloop.IOLoop.current().add_future(aws_response, handle_response)
         return future
