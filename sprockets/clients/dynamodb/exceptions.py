@@ -17,6 +17,14 @@ class DynamoDBException(Exception):
         super(DynamoDBException, self).__init__(*args, **kwargs)
 
 
+class RequestException(DynamoDBException):
+    """Raised when the HTTP request failed due to a network or DNS related
+    issue.
+
+    """
+    pass
+
+
 class ConditionalCheckFailedException(DynamoDBException):
     """A condition specified in the operation could not be evaluated."""
     pass

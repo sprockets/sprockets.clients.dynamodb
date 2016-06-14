@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+import socket
 
 from tornado import concurrent, httpclient, ioloop
 import tornado_aws
@@ -8,6 +9,13 @@ from tornado_aws import exceptions as aws_exceptions
 
 from . import utils
 from . import exceptions
+
+# Stub ConnectionError for Python 2.7 that doesn't support it
+try:
+    ConnectionError
+except NameError:
+    class ConnectionError(Exception):
+        pass
 
 
 LOGGER = logging.getLogger(__name__)
@@ -126,6 +134,8 @@ class DynamoDB(object):
             future.set_exception(exceptions.NoCredentialsError(str(error)))
         except aws_exceptions.NoProfileError as error:
             future.set_exception(exceptions.NoProfileError(str(error)))
+        except (socket.gaierror, ConnectionError) as req_err:
+            future.set_exception(exceptions.RequestException(req_err))
         except httpclient.HTTPError as err:
             if err.code == 599:
                 future.set_exception(exceptions.TimeoutException())
