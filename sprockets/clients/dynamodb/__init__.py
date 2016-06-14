@@ -4,7 +4,7 @@ except ImportError as error:
     def DynamoDB(*args, **kwargs):
         raise error
 
-version_info = (0, 2, 1)
+version_info = (0, 2, 2)
 __version__ = '.'.join(str(v) for v in version_info)
 
 # Response constants

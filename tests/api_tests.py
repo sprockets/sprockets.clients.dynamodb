@@ -1,5 +1,6 @@
 import datetime
 import os
+import socket
 import uuid
 
 import mock
@@ -101,6 +102,21 @@ class AWSClientTests(AsyncTestCase):
             fetch.return_value = future
             future.set_result(None)
             with self.assertRaises(exceptions.DynamoDBException):
+                yield self.client.create_table(self.generic_table_definition())
+
+    @testing.gen_test
+    def test_gaierror_raises_request_exception(self):
+        with mock.patch('tornado_aws.client.AsyncAWSClient.fetch') as fetch:
+            fetch.side_effect = socket.gaierror
+            with self.assertRaises(exceptions.RequestException):
+                yield self.client.create_table(self.generic_table_definition())
+
+
+    @testing.gen_test
+    def test_connection_error_request_exception(self):
+        with mock.patch('tornado_aws.client.AsyncAWSClient.fetch') as fetch:
+            fetch.side_effect = ConnectionError
+            with self.assertRaises(exceptions.RequestException):
                 yield self.client.create_table(self.generic_table_definition())
 
 
