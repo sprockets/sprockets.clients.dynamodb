@@ -10,6 +10,13 @@ from tornado_aws import exceptions as aws_exceptions
 from . import utils
 from . import exceptions
 
+# Stub ConnectionError for Python 2.7 that doesn't support it
+try:
+    ConnectionError
+except NameError:
+    class ConnectionError(Exception):
+        pass
+
 
 LOGGER = logging.getLogger(__name__)
 

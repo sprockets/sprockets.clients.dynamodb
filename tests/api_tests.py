@@ -13,6 +13,13 @@ from tornado_aws import exceptions as aws_exceptions
 from sprockets.clients import dynamodb
 from sprockets.clients.dynamodb import exceptions
 
+# Stub ConnectionError for Python 2.7 that doesn't support it
+try:
+    ConnectionError
+except NameError:
+    class ConnectionError(Exception):
+        pass
+
 
 class AsyncTestCase(testing.AsyncTestCase):
 
