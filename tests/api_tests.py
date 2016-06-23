@@ -13,7 +13,7 @@ from tornado import testing
 from tornado_aws import exceptions as aws_exceptions
 
 from sprockets.clients import dynamodb
-from sprockets.clients.dynamodb import connector, exceptions
+from sprockets.clients.dynamodb import exceptions
 
 
 class AsyncTestCase(testing.AsyncTestCase):
@@ -113,6 +113,13 @@ class AWSClientTests(AsyncTestCase):
             with self.assertRaises(exceptions.RequestException):
                 yield self.client.create_table(self.generic_table_definition())
 
+    @testing.gen_test
+    def test_oserror_raises_request_exception(self):
+        with mock.patch('tornado_aws.client.AsyncAWSClient.fetch') as fetch:
+            fetch.side_effect = OSError
+            with self.assertRaises(exceptions.RequestException):
+                yield self.client.create_table(self.generic_table_definition())
+
     @unittest.skipIf(sys.version_info.major < 3,
                      'ConnectionError is Python3 only')
     @testing.gen_test
@@ -122,6 +129,14 @@ class AWSClientTests(AsyncTestCase):
             with self.assertRaises(exceptions.RequestException):
                 yield self.client.create_table(self.generic_table_definition())
 
+    @unittest.skipIf(sys.version_info.major < 3,
+                     'ConnectionResetError is Python3 only')
+    @testing.gen_test
+    def test_connection_reset_error_request_exception(self):
+        with mock.patch('tornado_aws.client.AsyncAWSClient.fetch') as fetch:
+            fetch.side_effect = ConnectionResetError
+            with self.assertRaises(exceptions.RequestException):
+                yield self.client.create_table(self.generic_table_definition())
 
 class CreateTableTests(AsyncTestCase):
 
