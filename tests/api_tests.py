@@ -247,4 +247,4 @@ class PutGetDeleteTests(AsyncTestCase):
 
         response = yield self.client.get_item(definition['TableName'],
                                               {'id': row_id})
-        self.assertEqual(response['id'], row_id)
+        self.assertEqual(response['id'], str(row_id))

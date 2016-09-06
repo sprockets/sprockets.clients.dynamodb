@@ -14,6 +14,7 @@ the vast majority of types that we use.
    APIReference/API_AttributeValue.html
 
 """
+import base64
 import datetime
 import uuid
 import sys
@@ -58,12 +59,12 @@ def _marshall_value(value):
 
     """
     if PYTHON3 and isinstance(value, bytes):
-        return {'B': value}
+        return {'B': base64.b64encode(value).decode('ascii')}
     elif PYTHON3 and isinstance(value, str):
         return {'S': value}
     elif not PYTHON3 and isinstance(value, str):
         if _is_binary(value):
-            return {'B': value}
+            return {'B':  base64.b64encode(value).decode('ascii')}
         return {'S': value}
     elif isinstance(value, dict):
         return {'M': marshall(value)}
@@ -81,14 +82,14 @@ def _marshall_value(value):
         return {'L': [_marshall_value(v) for v in value]}
     elif isinstance(value, set):
         if PYTHON3 and all([isinstance(v, bytes) for v in value]):
-            return {'BS': sorted(list(value))}
+            return {'BS': _encode_binary_set(value)}
         elif PYTHON3 and all([isinstance(v, str) for v in value]):
             return {'SS': sorted(list(value))}
         elif all([isinstance(v, (int, float)) for v in value]):
             return {'NS': sorted([str(v) for v in value])}
         elif not PYTHON3 and all([isinstance(v, str) for v in value]) and \
                 all([_is_binary(v) for v in value]):
-            return {'BS': sorted(list(value))}
+            return {'BS': _encode_binary_set(value)}
         elif not PYTHON3 and all([isinstance(v, str) for v in value]) and \
                 all([_is_binary(v) is False for v in value]):
             return {'SS': sorted(list(value))}
@@ -97,6 +98,11 @@ def _marshall_value(value):
     elif value is None:
         return {'NULL': True}
     raise ValueError('Unsupported type: %s' % type(value))
+
+
+def _encode_binary_set(value):
+    return sorted([base64.b64encode(v).decode('ascii') for v in value])
+
 
 
 def unmarshall(values):
@@ -125,9 +131,10 @@ def _unmarshall_dict(value):
     """
     key = list(value.keys()).pop()
     if key == 'B':
-        return bytes(value[key])
+        return base64.b64decode(value[key].encode('ascii'))
     elif key == 'BS':
-        return set([bytes(v) for v in value[key]])
+        return set([base64.b64decode(v.encode('ascii'))
+                    for v in value[key]])
     elif key == 'BOOL':
         return value[key]
     elif key == 'L':
@@ -141,9 +148,9 @@ def _unmarshall_dict(value):
     elif key == 'NS':
         return set([_to_number(v) for v in value[key]])
     elif key == 'S':
-        return _maybe_convert(value[key])
+        return value[key]
     elif key == 'SS':
-        return set([_maybe_convert(v) for v in value[key]])
+        return set([v for v in value[key]])
     raise ValueError('Unsupported value type: %s' % key)
 
 
@@ -156,24 +163,6 @@ def _to_number(value):
 
     """
     return float(value) if '.' in value else int(value)
-
-
-def _maybe_convert(value):
-    """
-    Try to convert a string into something useful.
-
-    :param str value: The value to convert
-    :rtype: uuid.UUID|datetime.datetime|str
-
-    Possibly convert the value to a :py:class:`uuid.UUID` or
-    :py:class:`datetime.datetime` if possible, otherwise just return
-    the value.
-
-    """
-    try:
-        return uuid.UUID(value)
-    except ValueError:
-        return value
 
 
 def _is_binary(value):

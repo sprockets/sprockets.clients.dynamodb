@@ -1,3 +1,4 @@
+import base64
 import datetime
 import unittest
 import uuid
@@ -60,8 +61,9 @@ class MarshallTests(unittest.TestCase):
             'key7': {'NS': ['1', '2', '3', '4']},
             'key8': {'S': arrow_value.isoformat()},
             'key9': {'S': str(uuid_value)},
-            'key10': {'B': b'\0x01\0x02\0x03'},
-            'key11': {'BS': [b'\0x01\0x02\0x03', b'\0x04\0x05\0x06']},
+            'key10': {'B': base64.b64encode(b'\0x01\0x02\0x03').decode('ascii')},
+            'key11': {'BS': [base64.b64encode(b'\0x01\0x02\0x03').decode('ascii'),
+                             base64.b64encode(b'\0x04\0x05\0x06').decode('ascii')]},
             'key12': {'S': dt_value.isoformat()}
         }
         self.assertDictEqual(expectation, utils.marshall(value))
@@ -77,7 +79,7 @@ class UnmarshallTests(unittest.TestCase):
     maxDiff = None
 
     def test_complex_document(self):
-        uuid_value = uuid.uuid4()
+        uuid_value = str(uuid.uuid4())
         dt_value = arrow.utcnow()
         value = {
             'key1': {'S': 'str'},
@@ -95,9 +97,10 @@ class UnmarshallTests(unittest.TestCase):
             'key6': {'SS': ['a', 'b', 'c']},
             'key7': {'NS': ['1', '2', '3', '4']},
             'key8': {'S': dt_value.isoformat()},
-            'key9': {'S': str(uuid_value)},
-            'key10': {'B': b'\0x01\0x02\0x03'},
-            'key11': {'BS': [b'\0x01\0x02\0x03', b'\0x04\0x05\0x06']}
+            'key9': {'S': uuid_value},
+            'key10': {'B': base64.b64encode(b'\0x01\0x02\0x03').decode('ascii')},
+            'key11': {'BS': [base64.b64encode(b'\0x01\0x02\0x03').decode('ascii'),
+                             base64.b64encode(b'\0x04\0x05\0x06').decode('ascii')]}
         }
         expectation = {
             'key1': 'str',
