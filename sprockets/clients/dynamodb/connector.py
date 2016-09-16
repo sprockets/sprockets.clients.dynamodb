@@ -515,7 +515,7 @@ class DynamoDB(object):
             payload['Limit'] = limit
         return self.execute('ListTables', payload)
 
-    def put_item(self, table_name, item, return_values=False,
+    def put_item(self, table_name, item, return_values=None,
                  condition_expression=None,
                  expression_attribute_names=None,
                  expression_attribute_values=None,
@@ -623,7 +623,7 @@ class DynamoDB(object):
         if return_item_collection_metrics:
             payload['ReturnItemCollectionMetrics'] = 'SIZE'
         if return_values:
-            payload['ReturnValues'] = 'ALL_OLD'
+            payload['ReturnValues'] = return_values
         return self.execute('PutItem', payload)
 
     def get_item(self, table_name, key_dict, consistent_read=False,
