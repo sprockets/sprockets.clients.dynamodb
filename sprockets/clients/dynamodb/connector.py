@@ -1,7 +1,9 @@
 import json
 import logging
 import os
+import select
 import socket
+import ssl
 
 from tornado import concurrent, httpclient, ioloop
 import tornado_aws
@@ -10,7 +12,7 @@ from tornado_aws import exceptions as aws_exceptions
 from . import utils
 from . import exceptions
 
-# Stub ConnectionError && ConnectionResetError for Python 2.7
+# Stub Python3 exceptions for Python 2.7
 try:
     ConnectionError
 except NameError:
@@ -18,6 +20,9 @@ except NameError:
         pass
 
     class ConnectionResetError(Exception):
+        pass
+
+    class TimeoutError(Exception):
         pass
 
 
@@ -121,6 +126,8 @@ class DynamoDB(object):
                         response_reason = http_err.response.body
                     future.set_exception(
                         exceptions.RequestException(response_reason))
+            except TimeoutError:
+                future.set_exception(exceptions.TimeoutException())
             except Exception as exception:
                 future.set_exception(exception)
             else:
@@ -140,6 +147,8 @@ class DynamoDB(object):
         except (ConnectionError,
                 ConnectionResetError,
                 OSError,
+                select.error,
+                ssl.socket_error,
                 socket.gaierror) as error:
             future.set_exception(exceptions.RequestException(str(error)))
         except httpclient.HTTPError as err:
