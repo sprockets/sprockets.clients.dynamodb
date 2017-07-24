@@ -2,6 +2,8 @@ DynamoDB Client
 ===============
 An asynchronous DynamoDB client for Tornado
 
+*DEPRECATED* See [sprockets-dynamodb](https://github.com/sprockets/sprockets-dynamodb) instead
+
 |Version| |Downloads| |Status| |Coverage| |License|
 
 Installation
